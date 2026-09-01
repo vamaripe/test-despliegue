@@ -130,7 +130,6 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 .git
 .gitignore
 .vscode
-.mvn/wrapper
 target
 *.jar
 README.md
