@@ -64,3 +64,85 @@ npm-debug.log
 Dockerfile
 .dockerignore
 ```
+## Backend
+
+### Variables de entorno 
+
+```
+# ─── BASE DE DATOS ───────────────────────────────────────────
+DB_URL=jdbc:postgresql://postgres:5432/facelit-db
+DB_USERNAME=facelit_user
+DB_PASSWORD=facelit_password
+
+# ─── DOCKER / POSTGRES ───────────────────────────────────────
+POSTGRES_DB=facelit-db
+POSTGRES_USER=facelit_user
+POSTGRES_PASSWORD=facelit_password
+POSTGRES_PORT=5439
+
+# ─── JWT ─────────────────────────────────────────────────────
+JWT_SECRET=FaceLit2025$ClaveSecretaSuperSegura#SENA@Backend!
+
+# ─── GMAIL ───────────────────────────────────────────────────
+MAIL_USERNAME=facelit.system@gmail.com
+MAIL_PASSWORD=pgkyeljftwhclykr
+```
+
+### Dockerfile 
+
+```
+# =========================
+# Etapa 1: Compilación
+# =========================
+FROM eclipse-temurin:17-jdk-alpine AS builder
+
+WORKDIR /app
+
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+
+RUN chmod +x mvnw
+
+RUN ./mvnw dependency:go-offline -DskipTests
+
+COPY src src
+
+RUN ./mvnw clean package -DskipTests
+
+
+# =========================
+# Etapa 2: Ejecución
+# =========================
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/target/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+### .dockerignore
+
+```
+.git
+.gitignore
+.vscode
+.mvn/wrapper
+target
+*.jar
+README.md
+docs
+```
+
+## BD
+
+### Variables de entorno
+```
+POSTGRES_DB=facelit-db
+POSTGRES_USER=facelit_user
+POSTGRES_PASSWORD=facelit_password
+POSTGRES_PORT=5439
+```
